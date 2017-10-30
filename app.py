@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, send_from_directory
 
 app = Flask(__name__)
 
-@app.rout('/')
+@app.route('/')
 def index():
     return "Nothing to see here"
 
