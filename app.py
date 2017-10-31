@@ -9,11 +9,15 @@ def index():
     return "Nothing to see here"
 
 
-@app.route('/post_request', methods=['POST'])
-def poll_answer():
-    form_json = json.loads(request.form["payload"])
-    print("HERE'S THE DATA", form_json)
+@app.route('/response', methods=['POST'])
+def response():
+    data = json.loads(request.form["payload"])
+
     return "hi"
+
+@app.route('/slash', methods=['POST'])
+def response():
+    return "This works!"
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
 @app.route('/<path:path>')
