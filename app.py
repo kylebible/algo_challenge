@@ -12,8 +12,8 @@ def create_app():
 
     @app.route('/post_request', methods=['POST'])
     def poll_answer():
-        data = request.get_data()
-        print("HERE'S THE DATA", data)
+        # data = request.get_data()
+        # print("HERE'S THE DATA", data)
         
         return "hi"
 
