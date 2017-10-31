@@ -28,7 +28,7 @@ def response():
         "text": "Working on your request!"
     }
 
-    return
+    return jsonify(message)
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
 @app.route('/<path:path>')
