@@ -1,6 +1,6 @@
 import requests
 import json
-import re  
+import re
 
 
 def get_random_post(requested_difficulty='Easy', any_difficulty=False):
@@ -49,6 +49,57 @@ def diff_color(diff):
         return "#54D600"
     else:
         return "#2E5DFF"
+
+
+def background_worker(response_url):
+    data = []
+    for i in range(3):
+        data.append(get_random_post(any_difficulty=True))
+    message = {
+        "text": "Here are three random Algorithm challenges!",
+        "attachments": [{
+            "title": data[0]["title"],
+            "text": data[0]["difficulty"]+"\n"+data[0]["description"],
+            "color": diff_color(data[0]["difficulty"])
+        },
+        {
+            "title": data[1]["title"],
+            "text": data[1]["difficulty"]+"\n"+data[1]["description"],
+            "color": diff_color(data[1]["difficulty"])
+        },
+        {
+            "title": data[2]["title"],
+            "text": data[2]["difficulty"]+"\n"+data[2]["description"],
+            "color": diff_color(data[2]["difficulty"])
+        },
+        {
+            "title": "Choose which Algo you'd like to solve!",
+            "callback_id": "algo_choice",
+            "attachment_type": "default",
+            "actions": [
+                {
+                    "name": "choice",
+                    "text": "Challenge #1",
+                    "type": "button",
+                    "value": "challenge_1"
+                },
+                {
+                    "name": "choice",
+                    "text": "Challenge #2",
+                    "type": "button",
+                    "value": "challenge_2"
+                },
+                {
+                    "name": "choice",
+                    "text": "Challenge #3",
+                    "type": "button",
+                    "value": "challenge_3"
+                }
+            ]
+        }]
+    }
+
+    requests.post(response_url, data=json.dumps(message))
 
 
 if __name__ == "__main__":
