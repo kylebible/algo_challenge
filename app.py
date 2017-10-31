@@ -10,7 +10,7 @@ def index():
 
 @app.route('/post_request', methods=['POST'])
 def poll_answer():
-    data = request.data
+    data = request.json
     print(str(data))
     return data
 
