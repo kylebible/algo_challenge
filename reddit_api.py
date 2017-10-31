@@ -99,7 +99,7 @@ def background_worker(response_url):
     }
 
     r = requests.post(response_url, data=json.dumps(message))
-    print("RESPONSE AFTER MESSAGE SENT",r)
+    print("RESPONSE AFTER MESSAGE SENT",r.json())
 
 
 if __name__ == "__main__":
