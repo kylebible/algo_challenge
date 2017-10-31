@@ -9,8 +9,8 @@ def index():
     return "Nothing to see here"
 
 
-@app.route('/response', methods=['POST'])
-def response():
+@app.route('/results', methods=['POST'])
+def results():
     data = json.loads(request.form["payload"])
 
     return "hi"
