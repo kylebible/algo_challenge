@@ -11,6 +11,7 @@ def index():
 @app.route('/post_request', methods=['POST'])
 def poll_answer():
     data = request.data.decode("utf-8")
+    print(data)
     return data
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
