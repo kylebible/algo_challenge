@@ -18,11 +18,22 @@ def results():
 
 @app.route('/slash', methods=['POST'])
 def response():
-    data = get_random_post(any_difficulty=True)
+    data = []
+    for i in range(3):
+        data.push(get_random_post(any_difficulty=True))
     message = {
-        'text': data['url'],
+        'text': 'Here are three random Algorithm challenges!',
         'attachments': [{
-            'text': data['description']
+            'title': data[0]['title'],
+            'text': data[0]['description']
+        },
+        {
+            'title': data[1]['title'],
+            'text': data[1]['description']
+        },
+        {
+            'title': data[2]['title'],
+            'text': data[2]['description']
         }]
     }
     return jsonify(message)
