@@ -10,10 +10,8 @@ def index():
 
 @app.route('/post_request', methods=['POST'])
 def poll_answer():
-    if request.is_json:
-        print("IT'S JSON!")
-    data = request
-    print("HERE'S THE DATA", data)
+    form_json = json.loads(request.form["payload"])
+    print("HERE'S THE DATA", form_json)
     return "hi"
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
