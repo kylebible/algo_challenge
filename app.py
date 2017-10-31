@@ -10,7 +10,9 @@ def index():
 
 @app.route('/post_request', methods=['POST'])
 def poll_answer():
-    data = request.payload
+    if request.is_json:
+        print("IT'S JSON!")
+    data = request
     print("HERE'S THE DATA", data)
     return "hi"
 
