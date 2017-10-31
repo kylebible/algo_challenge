@@ -40,6 +40,16 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
     return data
 
 
+def diff_color(diff):
+    if diff == "Hard":
+        return "#CB3535"
+    elif diff == "Intermediate":
+        return "#E7AB17"
+    elif diff == "Easy":
+        return "#54D600"
+    else:
+        return "#2E5DFF"
+
 
 if __name__ == "__main__":
     get_random_post()
