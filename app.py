@@ -12,8 +12,12 @@ def create_app():
 
     @app.route('/post_request', methods=['POST'])
     def poll_answer():
-        data = request.json
-        print("HERE'S THE DATA",data)
+        if request.is_json:
+            data = request.json
+            print("HERE'S THE DATA",request)
+        else:
+            print("HERES THE REQUEST",request)
+        
         return "hi"
 
     @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
