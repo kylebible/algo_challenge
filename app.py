@@ -24,7 +24,11 @@ def response():
     thr = Thread(target=background_worker, args=[response_url])
     thr.start()
 
-    return jsonify(message="working on your request")
+    message = {
+        "text": "Working on your request!"
+    }
+
+    return jsonify(message=message)
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
 @app.route('/<path:path>')
