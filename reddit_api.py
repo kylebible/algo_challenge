@@ -16,9 +16,9 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
         return get_random_post(requested_difficulty)
         
 
-    if difficulty != requested_difficulty and not any_difficulty:
-        print("wrong difficulty", difficulty)
-        return get_random_post(requested_difficulty)
+    # if difficulty != requested_difficulty and not any_difficulty:
+    #     print("wrong difficulty", difficulty)
+    #     return get_random_post(requested_difficulty)
     
     description = post['selftext']
     description = description.replace('\n', '\\n')
@@ -34,7 +34,8 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
     data = {
         'title': title,
         'description': description,
-        'url': url
+        'url': url,
+        'difficulty': difficulty
     }
     return data
 

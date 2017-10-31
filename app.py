@@ -20,20 +20,20 @@ def results():
 def response():
     data = []
     for i in range(3):
-        data.push(get_random_post(any_difficulty=True))
+        data.append(get_random_post(any_difficulty=True))
     message = {
         'text': 'Here are three random Algorithm challenges!',
         'attachments': [{
             'title': data[0]['title'],
-            'text': data[0]['description']
+            'text': data[0]['difficulty']+"\n"+data[0]['description']
         },
         {
             'title': data[1]['title'],
-            'text': data[1]['description']
+            'text': data[1]['difficulty']+"\n"+data[1]['description']
         },
         {
             'title': data[2]['title'],
-            'text': data[2]['description']
+            'text': data[2]['difficulty']+"\n"+data[2]['description']
         }]
     }
     return jsonify(message)
