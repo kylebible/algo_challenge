@@ -39,7 +39,6 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
     }
     return data
 
-
 def diff_color(diff):
     if diff == "Hard":
         return "#CB3535"
