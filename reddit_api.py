@@ -96,7 +96,7 @@ def background_worker(response_url):
                 }
             ]
         }]
-    })
+    }
     r = requests.post(response_url, data=json.dumps(message))
     r = json.load(r)
     print("RESPONSE AFTER MESSAGE SENT", r)
