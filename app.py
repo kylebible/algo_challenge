@@ -10,7 +10,7 @@ def index():
 
 @app.route('/post_request', methods=['POST'])
 def poll_answer():
-    data = request.data.decode("utf-8")
+    data = request.data
     print(str(data))
     return data
 
