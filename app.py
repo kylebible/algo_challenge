@@ -12,11 +12,8 @@ def create_app():
 
     @app.route('/post_request', methods=['POST'])
     def poll_answer():
-        if request.is_json:
-            data = request.json
-            print("HERE'S THE DATA",request)
-        else:
-            print("HERES THE REQUEST",request)
+        data = request.get_data()
+        print("HERE'S THE DATA", data)
         
         return "hi"
 
