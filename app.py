@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, send_from_directory
+from flask import Flask, request, redirect, send_from_directory, jsonify
 import json
 from reddit_api import get_random_post
 
@@ -18,8 +18,14 @@ def results():
 
 @app.route('/slash', methods=['POST'])
 def response():
-    data = get_random_post()
-    return data
+    data = get_random_post(any_difficulty=True)
+    message = {
+        'text': data['url'],
+        'attachments': [{
+            'text': data['description']
+        }]
+    }
+    return jsonify(message)
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
 @app.route('/<path:path>')
