@@ -4,6 +4,8 @@ import re
 from bson import json_util
 import os
 from models import User, Team, Game, Challenge
+from datetime import datetime
+from random import shuffle
 
 num_teams = os.environ['NUM_TEAMS']
 team_members = os.environ['NUM_MEMBERS']
@@ -36,7 +38,13 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
         return get_random_post(requested_difficulty)
     
     description = description.replace('\\n', '\n')
-    find_challenge = Challenge.objects(description=description)
+    try:
+        find_challenge = Challenge.objects.get(description=description)
+        print("challenge already exists")
+        return get_random_post(requested_difficulty)
+    except:
+        pass
+    
     if len(find_challenge) > 0:
         return get_random_post(requested_difficulty)
     url = post['url']
@@ -57,6 +65,7 @@ def diff_color(diff):
         return "#54D600"
     else:
         return "#2E5DFF"
+
 
 
 def background_worker(response_url, channel):
@@ -115,6 +124,47 @@ def background_worker(response_url, channel):
         }]
     }
     r = requests.post(response_url, data=json.dumps(message))
+
+
+def randomize_teams(names, no_teams, game):
+    teams = []
+    shuffle(names)
+    for _ in range(no_teams):
+        teams.append([])
+
+    last_game = Game.objects.first()
+    last = last_game.teams
+
+    while names:
+        for team in teams:
+            if names:
+                team.append(names.pop())
+
+    for team in teams:
+        if team in last:
+            return randomize_teams(names, no_teams, game)
+
+    for team in teams:
+        max_driver_time = datetime.now()
+        current_driver = ""
+        for (idx, member) in enumerate(team):
+            if 'last_lead' in member:
+                if last_driving_date[member] < max_driver_time:
+                    max_driver_time = last_driving_date[member]
+                    current_driver = idx
+            else:
+                current_driver = idx
+                break
+        temp = team[0]
+        team[0] = team[current_driver]
+        team[current_driver] = temp
+        team[0].last_lead = datetime.now()
+        team[0].save()
+
+    game.teams = teams
+    game.save()
+
+    return teams
 
 
 if __name__ == "__main__":

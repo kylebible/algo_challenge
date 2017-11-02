@@ -1,12 +1,14 @@
 from flask import Flask, request, redirect, jsonify
 import json
 import os
-from reddit_api import background_worker
+from reddit_api import background_worker, randomize_teams
 from threading import Thread
 from models import User, Team, Game, Challenge
 
 app = Flask(__name__)
 
+num_teams = os.environ['NUM_TEAMS']
+team_members = os.environ['NUM_MEMBERS']
 
 @app.route('/')
 def index():
@@ -16,9 +18,39 @@ def index():
 @app.route('/results', methods=['POST'])
 def results():
     data = json.loads(request.form["payload"])
-    # oid = data['value']['$oid']
+    game_id = data['callback_id']
+    game = Game.objects.get(id=game_id)
+    player_id = data['user']['id']
+    player_name = data['user']['name']
+    challenge_id = data['actions'][0]['value']
+    try:
+        player = User.objects.get(id=player_id)
+    except:
+        print("couldn't find player, making new one")
+        player = User(id=player_id, username=player_name)
+        player = player.save()
+    
+    challenge = Challenge.objects.get(id=challenge_id)
+    challenge.votes.append(player)
+    challenge = challenge.save()
 
-    print("HALLELUJAH",data)
+    players_voted = []
+    for challenge in game.choices:
+        players_voted += challenge.votes
+    if len(players_voted) >= team_members:
+        teams = randomize_teams(players_voted, num_teams, game)
+        message_str = "Everyone has voted and we have our teams!\n"
+        team_no = 1
+        for team in teams:
+            message_str += "Team"+str(team_no)+"\n"
+            team_no += 1
+            for member in team:
+                message_str += member.username+"\n"
+            message_str += "\n"
+        message = {
+            "text": message_str
+        }
+        return message
 
     return "hi"
 
