@@ -97,26 +97,24 @@ def background_worker(response_url, channel):
                     "name": "choice",
                     "text": "Challenge #1",
                     "type": "button",
-                    "value": data[0].id
+                    "value": json.loads(json_util.dumps(data[0].id))
                 },
                 {
                     "name": "choice",
                     "text": "Challenge #2",
                     "type": "button",
-                    "value": data[1].id
+                    "value": json.loads(json_util.dumps(data[0].id))
                 },
                 {
                     "name": "choice",
                     "text": "Challenge #3",
                     "type": "button",
-                    "value": data[2].id
+                    "value": json.loads(json_util.dumps(data[0].id))
                 }
             ]
         }]
     }
-    cleaned_message = json.loads(json_util.dumps(message))
-    print("CB ID",cleaned_message['attachments'][3]['callback_id'])
-    r = requests.post(response_url, data=json.dumps(cleaned_message))
+    r = requests.post(response_url, data=json.dumps(message))
 
 
 if __name__ == "__main__":
