@@ -89,7 +89,7 @@ def background_worker(response_url, channel):
         },
         {
             "title": "Choose which Algo you'd like to solve!",
-            "callback_id": game.id,
+            "callback_id": game.id['$oid'],
             "attachment_type": "default",
             "actions": [
                 {
