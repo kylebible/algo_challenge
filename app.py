@@ -26,7 +26,6 @@ def results():
 def response():
     response_url = request.form.get("response_url")
     channel = request.form.get('channel_id')
-    print(channel)
     thr = Thread(target=background_worker, args=[response_url, channel])
     thr.start()
 

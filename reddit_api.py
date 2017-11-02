@@ -114,6 +114,7 @@ def background_worker(response_url, channel):
         }]
     }
     cleaned_message = json.loads(json_util.dumps(message))
+    print("CB ID",cleaned_message['attachments'][3]['callback_id'])
     r = requests.post(response_url, data=json.dumps(cleaned_message))
 
 
