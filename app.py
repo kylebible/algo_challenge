@@ -20,7 +20,7 @@ def results():
 @app.route('/slash', methods=['POST'])
 def response():
     response_url = request.form.get("response_url")
-    channel = request.form.get('channel')
+    channel = request.form
     print(channel)
     thr = Thread(target=background_worker, args=[response_url])
     thr.start()
