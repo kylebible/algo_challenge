@@ -33,10 +33,12 @@ def results():
     challenge = Challenge.objects.get(id=challenge_id)
     challenge.votes.append(player)
     challenge = challenge.save()
+    game = Game.objects.get(id=game_id)
 
     players_voted = []
     for challenge in game.choices:
         players_voted += challenge.votes
+    print("players voted", players_voted)
     if len(players_voted) >= team_members:
         teams = randomize_teams(players_voted, num_teams, game)
         message_str = "Everyone has voted and we have our teams!\n"

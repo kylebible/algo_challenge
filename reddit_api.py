@@ -39,14 +39,12 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
     
     description = description.replace('\\n', '\n')
     try:
-        find_challenge = Challenge.objects.get(description=description)
+        Challenge.objects.get(description=description)
         print("challenge already exists")
         return get_random_post(requested_difficulty)
     except:
         pass
     
-    if len(find_challenge) > 0:
-        return get_random_post(requested_difficulty)
     url = post['url']
     data = {
         'title': title,
