@@ -97,19 +97,19 @@ def background_worker(response_url, channel):
                     "name": "choice",
                     "text": "Challenge #1",
                     "type": "button",
-                    "value": json.loads(json_util.dumps(data[0].id))
+                    "value": json.loads(json_util.dumps(data[0].id))['$oid']
                 },
                 {
                     "name": "choice",
                     "text": "Challenge #2",
                     "type": "button",
-                    "value": json.loads(json_util.dumps(data[0].id))
+                    "value": json.loads(json_util.dumps(data[0].id))['$oid']
                 },
                 {
                     "name": "choice",
                     "text": "Challenge #3",
                     "type": "button",
-                    "value": json.loads(json_util.dumps(data[0].id))
+                    "value": json.loads(json_util.dumps(data[0].id))['$oid']
                 }
             ]
         }]
