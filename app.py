@@ -3,7 +3,7 @@ import json
 import os
 from reddit_api import background_worker
 from threading import Thread
-from models import User, Team, Game
+from models import User, Team, Game, Challenge
 
 app = Flask(__name__)
 
@@ -16,6 +16,7 @@ def index():
 @app.route('/results', methods=['POST'])
 def results():
     data = json.loads(request.form["payload"])
+    # oid = data['value']['$oid']
 
     print("HALLELUJAH",data)
 

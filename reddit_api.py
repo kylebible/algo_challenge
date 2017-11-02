@@ -67,6 +67,8 @@ def background_worker(response_url, channel):
             description=challenge['description'],
             difficulty=challenge['difficulty'])
         data.append(new_challenge.save())
+    game = Game(choices=data)
+    game = game.save()
     message = {
         "text": "Here are three random Algorithm challenges!",
         "attachments": [{
@@ -86,7 +88,7 @@ def background_worker(response_url, channel):
         },
         {
             "title": "Choose which Algo you'd like to solve!",
-            "callback_id": "algo_choice",
+            "callback_id": game.id,
             "attachment_type": "default",
             "actions": [
                 {
@@ -110,14 +112,8 @@ def background_worker(response_url, channel):
             ]
         }]
     }
-    r = requests.post(response_url, data=json.dumps(message))
-    try:
-        r = json.load(r)
-        print("load worked")
-    except:
-        print("load did not work")
-        r = r.text
-    print("RESPONSE AFTER MESSAGE SENT", r)
+    cleaned_message = json.loads(json_util.dumps(message))
+    r = requests.post(response_url, data=json.dumps(cleaned_message))
 
 
 if __name__ == "__main__":
