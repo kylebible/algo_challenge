@@ -1,7 +1,9 @@
-from flask import Flask, request, redirect, send_from_directory, jsonify
+from flask import Flask, request, redirect, jsonify
 import json
+import os
 from reddit_api import background_worker
 from threading import Thread
+from models import User, Team, Game
 
 app = Flask(__name__)
 
@@ -15,14 +17,16 @@ def index():
 def results():
     data = json.loads(request.form["payload"])
 
+    print("HALLELUJAH",data)
+
     return "hi"
 
 @app.route('/slash', methods=['POST'])
 def response():
     response_url = request.form.get("response_url")
-    channel = request.form
+    channel = request.form.get('channel_id')
     print(channel)
-    thr = Thread(target=background_worker, args=[response_url])
+    thr = Thread(target=background_worker, args=[response_url, channel])
     thr.start()
 
     message = {
@@ -30,6 +34,7 @@ def response():
     }
 
     return jsonify(message)
+    # return
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
 @app.route('/<path:path>')

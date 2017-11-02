@@ -1,6 +1,11 @@
 import requests
 import json
 import re
+import os
+from models import User, Team, Game, Challenge
+
+num_teams = os.environ['NUM_TEAMS']
+team_members = os.environ['NUM_MEMBERS']
 
 
 def get_random_post(requested_difficulty='Easy', any_difficulty=False):
@@ -30,6 +35,9 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
         return get_random_post(requested_difficulty)
     
     description = description.replace('\\n', '\n')
+    find_challenge = Challenge.objects(description=description)
+    if len(find_challenge) > 0:
+        return get_random_post(requested_difficulty)
     url = post['url']
     data = {
         'title': title,
@@ -50,10 +58,15 @@ def diff_color(diff):
         return "#2E5DFF"
 
 
-def background_worker(response_url):
+def background_worker(response_url, channel):
     data = []
     for i in range(3):
-        data.append(get_random_post(any_difficulty=True))
+        challenge = get_random_post(any_difficulty=True)
+        new_challenge = Challenge(
+            title=challenge['title'],
+            description=challenge['description'],
+            difficulty=challenge['difficulty'])
+        data.append(new_challenge.save())
     message = {
         "text": "Here are three random Algorithm challenges!",
         "attachments": [{
@@ -80,19 +93,19 @@ def background_worker(response_url):
                     "name": "choice",
                     "text": "Challenge #1",
                     "type": "button",
-                    "value": "challenge_1"
+                    "value": data[0].id
                 },
                 {
                     "name": "choice",
                     "text": "Challenge #2",
                     "type": "button",
-                    "value": "challenge_2"
+                    "value": data[1].id
                 },
                 {
                     "name": "choice",
                     "text": "Challenge #3",
                     "type": "button",
-                    "value": "challenge_3"
+                    "value": data[2].id
                 }
             ]
         }]
