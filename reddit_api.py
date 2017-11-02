@@ -70,6 +70,7 @@ def background_worker(response_url, channel):
         data.append(new_challenge.save())
     game = Game(choices=data)
     game = game.save()
+    game_id = json.loads(json_util.dumps(game.id))
     message = {
         "text": "Here are three random Algorithm challenges!",
         "attachments": [{
@@ -89,7 +90,7 @@ def background_worker(response_url, channel):
         },
         {
             "title": "Choose which Algo you'd like to solve!",
-            "callback_id": game.id['$oid'],
+            "callback_id": game_id['$oid'],
             "attachment_type": "default",
             "actions": [
                 {
