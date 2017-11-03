@@ -74,19 +74,29 @@ def results():
             message["attachments"].append(team_attachment)
 
         return jsonify(message)
+        
+        sc.api_call(
+            "chat.postMessage",
+            channel=channel,
+            text=message["text"],
+            response_type="in_channel",
+            attachments=message["attachments"],
+            replace_original=False
+        )
 
     message = {
         "replace_original": "false",
         "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
     }
 
-    return jsonify(message)
+    # return jsonify(message)
 
-    # sc.api_call(
-    #     "chat.postMessage",
-    #     channel=channel,
-    #     text=
-    # )
+    sc.api_call(
+        "chat.postMessage",
+        channel=channel,
+        text=message["text"],
+        replace_original=False
+    )
 
 @app.route('/slash', methods=['POST'])
 def response():
