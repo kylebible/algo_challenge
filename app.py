@@ -40,7 +40,7 @@ def results():
     for challenge in game.choices:
         if player in challenge.votes:
             message = {
-                "text": "You've already voted",
+                "text": "You've already voted!",
                 "replace_original": False
             }
             return jsonify(message)
@@ -60,7 +60,7 @@ def results():
         game = game.save()
         teams = randomize_teams(players_voted, num_teams, game)
         message = {
-            "replace_original": "false",
+            "replace_original": False,
             "response_type": "in_channel",
             "text": "The votes are in! Today we are going to solve:\n"
             + "<" + game.challenge.url + "|"
@@ -77,14 +77,7 @@ def results():
             team_attachment["text"] = message_str
             message["attachments"].append(team_attachment)
 
-        return sc.api_call(
-            "chat.postMessage",
-            channel=channel,
-            text=message["text"],
-            response_type="in_channel",
-            attachments=message["attachments"],
-            replace_original=False
-        )
+        return jsonify(message)
 
     message = {
         "replace_original": False,
