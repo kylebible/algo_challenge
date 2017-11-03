@@ -4,11 +4,15 @@ import os
 from reddit_api import background_worker, randomize_teams
 from threading import Thread
 from models import User, Team, Game, Challenge
+from slackclient import SlackClient
 
 app = Flask(__name__)
 
 num_teams = int(os.environ['NUM_TEAMS'])
 team_members = int(os.environ['NUM_MEMBERS'])
+token = os.environ["SLACK_TOKEN"]
+
+sc = SlackClient(token)
 
 @app.route('/')
 def index():
@@ -18,6 +22,7 @@ def index():
 @app.route('/results', methods=['POST'])
 def results():
     data = json.loads(request.form["payload"])
+    channel = request.form.get('channel_id')
     game_id = data['callback_id']
     game = Game.objects.get(id=game_id)
     player_id = data['user']['id']
@@ -67,7 +72,11 @@ def results():
 
         return jsonify(message)
 
-    return "We've got your vote! Once your whole team's vote is in, I'll post the result!"
+    sc.api_call(
+        "chat.postMessage",
+        channel=channel,
+        text="We've got your vote! Once your whole team's vote is in, I'll post the result!"
+    )
 
 @app.route('/slash', methods=['POST'])
 def response():

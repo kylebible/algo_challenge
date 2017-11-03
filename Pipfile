@@ -10,6 +10,7 @@ gunicorn = "*"
 requests = "*"
 boto = "*"
 mongoengine = "*"
+slackclient = "*"
 
 
 [dev-packages]
