@@ -74,6 +74,7 @@ def results():
         return jsonify(message)
 
     message = {
+        "replace_original": "false",
         "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
     }
 
