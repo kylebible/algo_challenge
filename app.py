@@ -80,7 +80,7 @@ def results():
         "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
     }
 
-    request.post(response_url, data=json.dumps(message))
+    requests.post(response_url, data=json.dumps(message))
 
     return
 
