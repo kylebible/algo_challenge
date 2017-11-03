@@ -7,8 +7,8 @@ from models import User, Team, Game, Challenge
 
 app = Flask(__name__)
 
-num_teams = os.environ['NUM_TEAMS']
-team_members = os.environ['NUM_MEMBERS']
+num_teams = int(os.environ['NUM_TEAMS'])
+team_members = int(os.environ['NUM_MEMBERS'])
 
 @app.route('/')
 def index():
@@ -31,6 +31,10 @@ def results():
         player = player.save()
     
     challenge = Challenge.objects.get(id=challenge_id)
+    for challenge in game.choices:
+        if player in challenge.votes:
+            return "You've already voted!"
+
     challenge.votes.append(player)
     challenge = challenge.save()
     game = Game.objects.get(id=game_id)

@@ -7,8 +7,8 @@ from models import User, Team, Game, Challenge
 from datetime import datetime
 from random import shuffle
 
-num_teams = os.environ['NUM_TEAMS']
-team_members = os.environ['NUM_MEMBERS']
+num_teams = int(os.environ['NUM_TEAMS'])
+team_members = int(os.environ['NUM_MEMBERS'])
 
 
 def get_random_post(requested_difficulty='Easy', any_difficulty=False):
@@ -22,12 +22,12 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
         difficulty = re.search(regex, title).group(1)
     except:
         return get_random_post(requested_difficulty)
-        
+
 
     # if difficulty != requested_difficulty and not any_difficulty:
     #     print("wrong difficulty", difficulty)
     #     return get_random_post(requested_difficulty)
-    
+
     description = post['selftext']
     description = description.replace('\n', '\\n')
     regex = r"^#(.*?)\\n#"
@@ -36,7 +36,7 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
     except:
         # print("regex failed for desc",post['selftext'])
         return get_random_post(requested_difficulty)
-    
+
     description = description.replace('\\n', '\n')
     try:
         Challenge.objects.get(description=description)
@@ -44,7 +44,7 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
         return get_random_post(requested_difficulty)
     except:
         pass
-    
+
     url = post['url']
     data = {
         'title': title,
