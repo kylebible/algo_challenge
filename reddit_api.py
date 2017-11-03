@@ -6,9 +6,13 @@ import os
 from models import User, Team, Game, Challenge
 from datetime import datetime
 from random import shuffle
+from slackclient import SlackClient
 
 num_teams = int(os.environ['NUM_TEAMS'])
 team_members = int(os.environ['NUM_MEMBERS'])
+token = os.environ["SLACK_TOKEN"]
+
+sc = SlackClient(token)
 
 
 def get_random_post(requested_difficulty='Easy', any_difficulty=False):
@@ -103,7 +107,14 @@ def background_worker(response_url, channel):
         choices["actions"].append(choice)
     message["attachments"].append(choices)
 
-    requests.post(response_url, data=json.dumps(message))
+    sc.api_call(
+        "chat.postMessage",
+        channel=channel,
+        text=message["text"],
+        attachments=message["attachments"]
+    )
+
+    # requests.post(response_url, data=json.dumps(message))
 
 
 def randomize_teams(names, no_teams, game):
