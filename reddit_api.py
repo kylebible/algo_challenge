@@ -65,7 +65,6 @@ def diff_color(diff):
         return "#2E5DFF"
 
 
-
 def background_worker(response_url, channel):
     data = []
     for i in range(3):
@@ -73,55 +72,38 @@ def background_worker(response_url, channel):
         new_challenge = Challenge(
             title=challenge['title'],
             description=challenge['description'],
-            difficulty=challenge['difficulty'])
+            difficulty=challenge['difficulty'],
+            url=challenge['url'])
         data.append(new_challenge.save())
     game = Game(choices=data)
     game = game.save()
     game_id = json.loads(json_util.dumps(game.id))
     message = {
         "text": "Here are three random Algorithm challenges!",
-        "attachments": [{
-            "title": data[0]["title"],
-            "text": data[0]["difficulty"]+"\n"+data[0]["description"],
-            "color": diff_color(data[0]["difficulty"])
-        },
-        {
-            "title": data[1]["title"],
-            "text": data[1]["difficulty"]+"\n"+data[1]["description"],
-            "color": diff_color(data[1]["difficulty"])
-        },
-        {
-            "title": data[2]["title"],
-            "text": data[2]["difficulty"]+"\n"+data[2]["description"],
-            "color": diff_color(data[2]["difficulty"])
-        },
-        {
-            "title": "Choose which Algo you'd like to solve!",
-            "callback_id": game_id['$oid'],
-            "attachment_type": "default",
-            "actions": [
-                {
-                    "name": "choice",
-                    "text": "Challenge #1",
-                    "type": "button",
-                    "value": json.loads(json_util.dumps(data[0].id))['$oid']
-                },
-                {
-                    "name": "choice",
-                    "text": "Challenge #2",
-                    "type": "button",
-                    "value": json.loads(json_util.dumps(data[0].id))['$oid']
-                },
-                {
-                    "name": "choice",
-                    "text": "Challenge #3",
-                    "type": "button",
-                    "value": json.loads(json_util.dumps(data[0].id))['$oid']
-                }
-            ]
-        }]
+        "attachments": []}
+    choices = {
+        "title": "Choose which Algo you'd like to solve!",
+        "callback_id": game_id['$oid'],
+        "attachment_type": "default",
+        "actions": []
     }
-    r = requests.post(response_url, data=json.dumps(message))
+    challenge_no = 1
+    for chall in data:
+        challenge_attachment = {}
+        challenge_attachment["title"] = "<" + chall.url + "|" + chall.title + ">"
+        challenge_attachment["text"] = chall.description
+        challenge_attachment["color"] = diff_color(chall.difficulty)
+        message["attachments"].append(challenge_attachment)
+        choice = {}
+        choice["name"] = "choice"
+        choice["text"] = "Challenge #" + str(challenge_no)
+        challenge_no += 1
+        choice["type"] = "button"
+        choice["value"] = json.loads(json_util.dumps(chall.id))["$oid"]
+        choices["actions"].append(choice)
+    message["attachments"].append(choices)
+
+    requests.post(response_url, data=json.dumps(message))
 
 
 def randomize_teams(names, no_teams, game):

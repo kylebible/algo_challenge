@@ -29,7 +29,7 @@ def results():
         print("couldn't find player, making new one")
         player = User(id=player_id, username=player_name)
         player = player.save()
-    
+
     challenge = Challenge.objects.get(id=challenge_id)
     for challenge in game.choices:
         if player in challenge.votes:
@@ -40,25 +40,34 @@ def results():
     game = Game.objects.get(id=game_id)
 
     players_voted = []
+    most_votes = game.choices[0]
     for challenge in game.choices:
         players_voted += challenge.votes
-    print("players voted", players_voted)
+        if len(most_votes.votes) < len(challenge.votes):
+            most_votes = challenge
     if len(players_voted) >= team_members:
+        game.challenge = most_votes
+        game = game.save()
         teams = randomize_teams(players_voted, num_teams, game)
-        message_str = "Everyone has voted and we have our teams!\n"
+        message = {
+            "text": "The votes are in! Today we are going to solve:\n"
+            + "<" + game.challenge.url + "|"
+            + game.challenge.title + ">",
+            "attachments": []}
         team_no = 1
         for team in teams:
-            message_str += "Team"+str(team_no)+"\n"
+            team_attachment = {}
+            team_attachment["title"] = "Team"+str(team_no)
             team_no += 1
+            message_str = ""
             for member in team:
-                message_str += member.username+"\n"
-            message_str += "\n"
-        message = {
-            "text": message_str
-        }
+                message_str += "<@"+member.id+">\n"
+            team_attachment["text"] = message_str
+            message["attachments"].append(team_attachment)
+
         return jsonify(message)
 
-    return "hi"
+    return "We've got your vote! Once your whole team's vote is in, I'll post the result!"
 
 @app.route('/slash', methods=['POST'])
 def response():
