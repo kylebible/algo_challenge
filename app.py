@@ -24,7 +24,6 @@ def index():
 def results():
     data = json.loads(request.form["payload"])
     channel = request.form.get('channel_id')
-    response_url = request.form.get('response_url')
     game_id = data['callback_id']
     game = Game.objects.get(id=game_id)
     player_id = data['user']['id']
@@ -81,9 +80,7 @@ def results():
         "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
     }
 
-    requests.post(response_url, data=json.dumps(message))
-
-    return
+    return jsonify(message)
 
     # sc.api_call(
     #     "chat.postMessage",
