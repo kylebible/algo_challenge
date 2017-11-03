@@ -79,7 +79,7 @@ def results():
         "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
     }
 
-    return
+    return jsonify(message)
 
     # sc.api_call(
     #     "chat.postMessage",
