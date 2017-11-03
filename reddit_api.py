@@ -87,7 +87,6 @@ def background_worker(response_url, channel):
         "text": "Here are three random Algorithm challenges!",
         "attachments": []}
     choices = {
-        "replace_original": "false",
         "title": "Choose which Algo you'd like to solve!",
         "callback_id": game_id['$oid'],
         "attachment_type": "default",
@@ -113,6 +112,7 @@ def background_worker(response_url, channel):
         "chat.postMessage",
         channel=channel,
         text=message["text"],
+        response_type=message["response_type"],
         attachments=message["attachments"]
     )
 
