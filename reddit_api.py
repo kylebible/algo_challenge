@@ -142,6 +142,8 @@ def randomize_teams(names, no_teams, game):
         if team in last:
             return randomize_teams(names, no_teams, game)
 
+    
+    teams_object = []
     for team in teams:
         max_driver_time = datetime.now()
         current_driver = ""
@@ -159,8 +161,10 @@ def randomize_teams(names, no_teams, game):
         team[0].last_lead = datetime.now()
         team[0].save()
         team = Team(members=team)
-
-    game.teams = teams
+        teams_object.append(team)
+    
+    print(teams,teams_object)
+    game.teams = teams_object
     game.save()
 
     return teams
