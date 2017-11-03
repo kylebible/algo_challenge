@@ -65,9 +65,9 @@ def results():
             team_attachment = {}
             team_attachment["title"] = "Team"+str(team_no)
             team_no += 1
-            message_str = ""
             for member in team:
-                message_str += "<@"+member.id+">\n"
+                # message_str += "<@"+member.id+">\n"
+                message_str = "<@U7QL9HM50>\n"
             team_attachment["text"] = message_str
             message["attachments"].append(team_attachment)
 
