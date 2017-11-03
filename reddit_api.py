@@ -158,6 +158,7 @@ def randomize_teams(names, no_teams, game):
         team[current_driver] = temp
         team[0].last_lead = datetime.now()
         team[0].save()
+        team = Team(members=team).save()
 
     game.teams = teams
     game.save()
