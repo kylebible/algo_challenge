@@ -4,6 +4,7 @@ import os
 from reddit_api import background_worker, randomize_teams
 from threading import Thread
 from models import User, Team, Game, Challenge
+import requests
 from slackclient import SlackClient
 
 app = Flask(__name__)
