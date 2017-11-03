@@ -83,16 +83,15 @@ def results():
         )
 
     message = {
-        "replace_original": "false",
-        "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
+        "replace_original": "false"
     }
 
-    # return jsonify(message)
+    return jsonify(message)
 
     return sc.api_call(
         "chat.postMessage",
         channel=channel,
-        text=message["text"],
+        text="We've got your vote! Once the whole team's vote is in, I'll post the result!",
         replace_original=False
     )
 
