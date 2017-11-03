@@ -39,7 +39,11 @@ def results():
     challenge = Challenge.objects.get(id=challenge_id)
     for challenge in game.choices:
         if player in challenge.votes:
-            return "You've already voted!"
+            message = {
+                "text": "You've already voted",
+                "replace_original": False
+            }
+            return jsonify(message)
 
     challenge.votes.append(player)
     challenge = challenge.save()

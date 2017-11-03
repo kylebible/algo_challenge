@@ -83,7 +83,6 @@ def background_worker(response_url, channel):
     game = game.save()
     game_id = json.loads(json_util.dumps(game.id))
     message = {
-        "replace_original": "false",
         "response_type": "in_channel",
         "text": "Here are three random Algorithm challenges!",
         "attachments": []}
