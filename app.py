@@ -90,7 +90,6 @@ def response():
     }
 
     return jsonify(message)
-    # return
 
 @app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
 @app.route('/<path:path>')
