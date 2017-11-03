@@ -108,13 +108,15 @@ def background_worker(response_url, channel):
         choices["actions"].append(choice)
     message["attachments"].append(choices)
 
-    sc.api_call(
+    call = sc.api_call(
         "chat.postMessage",
         channel=channel,
         text=message["text"],
         response_type=message["response_type"],
         attachments=message["attachments"]
     )
+
+    print("CALL",call)
 
 
 def randomize_teams(names, no_teams, game):
