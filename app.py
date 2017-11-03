@@ -73,7 +73,7 @@ def results():
             team_attachment["text"] = message_str
             message["attachments"].append(team_attachment)
 
-        sc.api_call(
+        return sc.api_call(
             "chat.postMessage",
             channel=channel,
             text=message["text"],
@@ -82,8 +82,6 @@ def results():
             replace_original=False
         )
 
-        return
-
     message = {
         "replace_original": "false",
         "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
@@ -91,14 +89,12 @@ def results():
 
     # return jsonify(message)
 
-    sc.api_call(
+    return sc.api_call(
         "chat.postMessage",
         channel=channel,
         text=message["text"],
         replace_original=False
     )
-
-    return
 
 @app.route('/slash', methods=['POST'])
 def response():
