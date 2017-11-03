@@ -56,7 +56,7 @@ def results():
         message = {
             "text": message_str
         }
-        return message
+        return jsonify(message)
 
     return "hi"
 
