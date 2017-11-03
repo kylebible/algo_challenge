@@ -149,8 +149,8 @@ def randomize_teams(names, no_teams, game):
         current_driver = ""
         for (idx, member) in enumerate(team):
             if 'last_lead' in member:
-                if last_driving_date[member] < max_driver_time:
-                    max_driver_time = last_driving_date[member]
+                if member.last_lead < max_driver_time:
+                    max_driver_time = member.last_lead
                     current_driver = idx
             else:
                 current_driver = idx
