@@ -83,17 +83,11 @@ def results():
         )
 
     message = {
-        "replace_original": "false"
+        "replace_original": False,
+        "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
     }
 
     return jsonify(message)
-
-    return sc.api_call(
-        "chat.postMessage",
-        channel=channel,
-        text="We've got your vote! Once the whole team's vote is in, I'll post the result!",
-        replace_original=False
-    )
 
 @app.route('/slash', methods=['POST'])
 def response():
