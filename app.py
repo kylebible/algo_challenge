@@ -89,7 +89,7 @@ def results():
 @app.route('/slash', methods=['POST'])
 def response():
     data = json.loads(request.form["payload"])
-    print("payload",data)
+    print("payload", data)
     response_url = request.form.get("response_url")
     channel = request.form.get('channel_id')
     thr = Thread(target=background_worker, args=[response_url, channel])
