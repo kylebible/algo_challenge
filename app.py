@@ -88,7 +88,7 @@ def results():
 
 @app.route('/slash', methods=['POST'])
 def response():
-    data = request.form.get()
+    data = request.form['payload']
     print("payload", data)
     response_url = request.form.get("response_url")
     channel = request.form.get('channel_id')
