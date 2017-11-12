@@ -92,8 +92,7 @@ def background_worker(response_url, channel):
         "attachment_type": "default",
         "actions": []
     }
-    challenge_no = 1
-    for chall in data:
+    for i, chall in enumerate(data):
         challenge_attachment = {}
         challenge_attachment["title"] = "<" + chall.url + "|" + chall.title + ">"
         challenge_attachment["text"] = chall.description
@@ -101,8 +100,7 @@ def background_worker(response_url, channel):
         message["attachments"].append(challenge_attachment)
         choice = {}
         choice["name"] = "choice"
-        choice["text"] = "Challenge #" + str(challenge_no)
-        challenge_no += 1
+        choice["text"] = "Challenge #" + str(i+1)
         choice["type"] = "button"
         choice["value"] = json.loads(json_util.dumps(chall.id))["$oid"]
         choices["actions"].append(choice)
