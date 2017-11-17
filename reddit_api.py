@@ -1,6 +1,7 @@
 import requests
 import json
 import re
+from random import randint
 from bson import json_util
 import os
 from models import User, Team, Game, Challenge
@@ -16,22 +17,15 @@ token = os.environ["SLACK_TOKEN"]
 sc = SlackClient(token)
 
 
-def get_random_post(requested_difficulty='Easy', any_difficulty=False):
-    r = requests.get('http://reddit.com/r/dailyprogrammer/random.json', headers = {'User-agent': 'reddit_daily_algo_bot 0.1'})
+def get_reddit_post(url):
+    r = requests.get(
+        url+'.json',
+        headers={
+            'User-agent': 'reddit_daily_algo_bot 0.1'
+        })
     data = r.json()
     post = data[0]['data']['children'][0]['data']
     title = post['title']
-
-    regex = r"\[[^)]+\].*?\[([^)]+)\]"
-    try:
-        difficulty = re.search(regex, title).group(1)
-    except:
-        return get_random_post(requested_difficulty)
-
-
-    # if difficulty != requested_difficulty and not any_difficulty:
-    #     print("wrong difficulty", difficulty)
-    #     return get_random_post(requested_difficulty)
 
     description = post['selftext']
     description = description.replace('\n', '\\n')
@@ -40,13 +34,13 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
         description = re.search(regex, description).group(1)
     except:
         # print("regex failed for desc",post['selftext'])
-        return get_random_post(requested_difficulty)
+        return "Couldn't parse out the description"
 
     description = description.replace('\\n', '\n')
     try:
-        Challenge.objects.get(description=description)
+        Challenge.objects.get(url=url, selected=True)
         print("challenge already exists")
-        return get_random_post(requested_difficulty)
+        return "This already exists, submit a new one"
     except:
         pass
 
@@ -54,10 +48,10 @@ def get_random_post(requested_difficulty='Easy', any_difficulty=False):
     data = {
         'title': title,
         'description': description,
-        'url': url,
-        'difficulty': difficulty
+        'url': url
     }
     return data
+
 
 def diff_color(diff):
     if diff == "Hard":
@@ -70,38 +64,56 @@ def diff_color(diff):
         return "#2E5DFF"
 
 
-def background_worker(response_url, channel):
-    data = []
-    for i in range(3):
-        challenge = get_random_post(any_difficulty=True)
-        new_challenge = Challenge(
-            title=challenge['title'],
-            description=challenge['description'],
-            difficulty=challenge['difficulty'],
-            url=challenge['url'])
-        data.append(new_challenge.save())
-    game = Game(choices=data)
+def challenge_creation(response_url, channel, url):
+    print("entered challenge creation")
+    challenge = get_reddit_post(url)
+    print("exited reddit post", challenge)
+    new_challenge = Challenge(
+        title=challenge['title'],
+        description=challenge['description'],
+        url=challenge['url'])
+    new_challenge = new_challenge.save()
+    game = Game.objects.get(active=True)
+    game.submissions.append(new_challenge)
+    game.save()
+    message = {
+        "text": "Great Choice! We'll let you know if it will be voted on when the challenge starts tomorrow!",
+    }
+    sc.api_call(
+        "chat.postMessage",
+        channel=channel,
+        text=message["text"])
+
+
+def choices_creation(response_url, channel, url):
+    challenges = get_random_challenges()
+    # TODO: make get_random_challenges()
+    game = Game.objects.get(active=True)
+    game.choices = challenges
     game = game.save()
     game_id = json.loads(json_util.dumps(game.id))
     message = {
         "response_type": "in_channel",
-        "text": "Here are three random Algorithm challenges!",
-        "attachments": []}
+        "text": "Here are three Algorithm challenges!",
+        "attachments": []
+    }
     choices = {
         "title": "Choose which Algo you'd like to solve!",
         "callback_id": game_id['$oid'],
         "attachment_type": "default",
         "actions": []
     }
-    for i, chall in enumerate(data):
+    for i, chall in enumerate(challenges):
         challenge_attachment = {}
-        challenge_attachment["title"] = "<" + chall.url + "|" + chall.title + ">"
+        challenge_attachment[
+            "title"] = "<" + chall.url + "|" + chall.title + ">"
         challenge_attachment["text"] = chall.description
-        challenge_attachment["color"] = diff_color(chall.difficulty)
+        challenge_attachment["color"] = rand_color()
+        # TODO: make rand_color()
         message["attachments"].append(challenge_attachment)
         choice = {}
         choice["name"] = "choice"
-        choice["text"] = "Challenge #" + str(i+1)
+        choice["text"] = "Challenge #" + str(i + 1)
         choice["type"] = "button"
         choice["value"] = json.loads(json_util.dumps(chall.id))["$oid"]
         choices["actions"].append(choice)
@@ -112,8 +124,18 @@ def background_worker(response_url, channel):
         channel=channel,
         text=message["text"],
         response_type=message["response_type"],
-        attachments=message["attachments"]
-    )
+        attachments=message["attachments"])
+
+
+def get_random_challenges():
+    game = Game.objects.get(active=True)
+    submissions = game.submissions
+    for _ in range(3):
+        i = randint(0, len(submissions)-1)
+        game.choices.append(submissions[i])
+        del submissions[i]
+    game.save()
+    return game.submissions
 
 
 def randomize_teams(names, no_teams, game):
@@ -133,8 +155,7 @@ def randomize_teams(names, no_teams, game):
     for team in teams:
         if team in last:
             return randomize_teams(names, no_teams, game)
-
-
+          
     teams_object = []
     for team in teams:
         max_driver_time = datetime.now()
@@ -155,7 +176,7 @@ def randomize_teams(names, no_teams, game):
         team = Team(members=team)
         teams_object.append(team)
 
-    print(teams,teams_object)
+    print(teams, teams_object)
     game.teams = teams_object
     game.save()
 
