@@ -66,11 +66,12 @@ def diff_color(diff):
 def challenge_creation(response_url, channel, url):
     print("entered challenge creation")
     challenge = get_reddit_post(url)
-    print("exited reddit post",challenge)
+    print("exited reddit post", challenge)
     new_challenge = Challenge(
         title=challenge['title'],
         description=challenge['description'],
         url=challenge['url'])
+    new_challenge = new_challenge.save()
     game = Game.objects.get(active=True)
     game.submissions.append(new_challenge)
     game.save()
