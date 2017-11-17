@@ -100,7 +100,9 @@ def response():
     text = request.form.get("text")
     response_url = request.form.get("response_url")
     channel = request.form.get('channel_id')
+    print("checking for url", text)
     if text[:8] == "https://" or text[:7] == "http://":
+        print("is url")
         url = text
         thr = Thread(
             target=challenge_creation, args=[response_url, channel, url])
