@@ -46,6 +46,7 @@ class Challenge(Document):
     title = StringField()
     description = StringField()
     difficulty = StringField()
+    selected = BooleanField()
     url = URLField()
     votes = ListField(ReferenceField(User))
     creation_date = DateTimeField()
@@ -61,6 +62,8 @@ class Challenge(Document):
 class Game(Document):
     teams = ListField(EmbeddedDocumentField(Team))
     challenge = ReferenceField(Challenge)
+    submissions = ListField(ReferenceField(Challenge))
+    active = BooleanField()
     choices = ListField(ReferenceField(Challenge))
     solution = StringField()
     creation_date = DateTimeField()

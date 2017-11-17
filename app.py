@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, jsonify
 import json
 import os
-from reddit_api import background_worker, randomize_teams
+from reddit_api import background_worker, randomize_teams, challenge_creation, choices_creation
 from threading import Thread
 from models import User, Team, Game, Challenge
 import requests
@@ -14,6 +14,7 @@ team_members = int(os.environ['NUM_MEMBERS'])
 token = os.environ["SLACK_TOKEN"]
 
 sc = SlackClient(token)
+
 
 @app.route('/')
 def index():
@@ -61,50 +62,64 @@ def results():
         game = game.save()
         teams = randomize_teams(players_voted, num_teams, game)
         message = {
-            "replace_original": False,
-            "response_type": "in_channel",
-            "text": "The votes are in! Today we are going to solve:\n"
-            + "<" + game.challenge.url + "|"
-            + game.challenge.title + ">",
-            "attachments": []}
+            "replace_original":
+            False,
+            "response_type":
+            "in_channel",
+            "text":
+            "The votes are in! Today we are going to solve:\n" + "<" +
+            game.challenge.url + "|" + game.challenge.title + ">",
+            "attachments": []
+        }
         team_no = 1
         for team in teams:
             team_attachment = {}
-            team_attachment["title"] = "Team"+str(team_no)
+            team_attachment["title"] = "Team" + str(team_no)
             team_no += 1
             message_str = ""
             for member in team:
-                message_str += "<@"+member.id+">\n"
+                message_str += "<@" + member.id + ">\n"
             team_attachment["text"] = message_str
             message["attachments"].append(team_attachment)
 
         return jsonify(message)
 
     message = {
-        "replace_original": False,
-        "text": "We've got your vote! Once the whole team's vote is in, I'll post the result!"
+        "replace_original":
+        False,
+        "text":
+        "We've got your vote! Once the whole team's vote is in, I'll post the result!"
     }
 
     return jsonify(message)
+
 
 @app.route('/slash', methods=['POST'])
 def response():
-    print(request.form)
+    message = {"text": "Working on your request!"}
+    text = request.form.get("text")
     response_url = request.form.get("response_url")
     channel = request.form.get('channel_id')
+    if text[:8] == "https://" or text[:7] == "http://":
+        url = text
+        thr = Thread(
+            target=challenge_creation, args=[response_url, channel, url])
+        return jsonify(message)
+    print(request.form)
     thr = Thread(target=background_worker, args=[response_url, channel])
     thr.start()
 
-    message = {
-        "text": "Working on your request!"
-    }
-
     return jsonify(message)
 
-@app.route('/', defaults={'path': ''})  # Catch All urls, enabling copy-paste url
+
+@app.route(
+    '/', defaults={
+        'path': ''
+    })  # Catch All urls, enabling copy-paste url
 @app.route('/<path:path>')
 def home(path):
     return redirect('/')
+
 
 if __name__ == "__main__":
     app.run()
