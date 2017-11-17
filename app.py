@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, jsonify
 import json
 import os
-from reddit_api import background_worker, randomize_teams
+from reddit_api import background_worker, randomize_teams, scheduled_post
 from threading import Thread
 from models import User, Team, Game, Challenge
 import requests
@@ -105,4 +105,5 @@ def home(path):
     return redirect('/')
 
 if __name__ == "__main__":
+    thr = Thread(target=scheduled_post, args=[response_url, channel])
     app.run()
