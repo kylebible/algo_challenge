@@ -23,6 +23,7 @@ def index():
 @app.route('/results', methods=['POST'])
 def results():
     data = json.loads(request.form["payload"])
+    print(data)
     channel = request.form.get('channel_id')
     game_id = data['callback_id']
     game = Game.objects.get(id=game_id)
