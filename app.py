@@ -106,11 +106,9 @@ def response():
         url = text
         thr = Thread(
             target=challenge_creation, args=[response_url, channel, url])
+        thr.start()
         return jsonify(message)
     print(request.form)
-    thr = Thread(target=background_worker, args=[response_url, channel])
-    thr.start()
-
     return jsonify(message)
 
 
