@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, jsonify
 import json
 import os
-from reddit_api import background_worker, randomize_teams, challenge_creation, choices_creation
+from reddit_api import randomize_teams, challenge_creation, choices_creation
 from threading import Thread
 from models import User, Team, Game, Challenge
 import requests

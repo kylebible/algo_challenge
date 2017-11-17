@@ -47,6 +47,7 @@ class Challenge(Document):
     description = StringField()
     difficulty = StringField()
     selected = BooleanField()
+    submitted_by = ReferenceField(User)
     url = URLField()
     votes = ListField(ReferenceField(User))
     creation_date = DateTimeField()
