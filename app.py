@@ -105,5 +105,6 @@ def home(path):
     return redirect('/')
 
 if __name__ == "__main__":
-    thr = Thread(target=scheduled_post, args=[response_url, channel])
+    thr = Thread(target=scheduled_post)
+    thr.start()
     app.run()

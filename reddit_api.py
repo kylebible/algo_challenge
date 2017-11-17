@@ -163,25 +163,16 @@ def randomize_teams(names, no_teams, game):
 
 
 def scheduled_post():
-    # thr = Thread(target=background_worker, args=[response_url, channel])
-    sc.api_call(
-        "chat.postMessage",
-        channel="algo",
-        text="Hello World!",
-        # response_type=message["response_type"],
-        # attachments=message["attachments"]
-    )
-
-    @sched.scheduled_job('cron', day_of_week='mon-fri', hour=15, minute=15)
+    sched = BlockingScheduler()
+    time_string = os.environ['SCHEDULED_TIME']
+    hour, minute = map(int, time_string.split(':'))
+    @sched.scheduled_job('cron', day_of_week='mon-fri', hour=hour, minute=minute) # noqa
     def scheduled_job():
         sc.api_call(
             "chat.postMessage",
             channel="algo",
-            text="Hello World!",
-            # response_type=message["response_type"],
-            # attachments=message["attachments"]
+            text="Hello World!"
         )
-
     sched.start()
 
 if __name__ == "__main__":
