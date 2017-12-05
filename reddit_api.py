@@ -8,6 +8,7 @@ from models import User, Team, Game, Challenge
 from datetime import datetime
 from random import shuffle
 from slackclient import SlackClient
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 num_teams = int(os.environ['NUM_TEAMS'])
 team_members = int(os.environ['NUM_MEMBERS'])
@@ -154,7 +155,7 @@ def randomize_teams(names, no_teams, game):
     for team in teams:
         if team in last:
             return randomize_teams(names, no_teams, game)
-
+          
     teams_object = []
     for team in teams:
         max_driver_time = datetime.now()
@@ -181,6 +182,19 @@ def randomize_teams(names, no_teams, game):
 
     return teams
 
+
+def scheduled_post():
+    sched = BlockingScheduler()
+    time_string = os.environ['SCHEDULED_TIME']
+    hour, minute = map(int, time_string.split(':'))
+    @sched.scheduled_job('cron', day_of_week='mon-fri', hour=hour, minute=minute) # noqa
+    def scheduled_job():
+        sc.api_call(
+            "chat.postMessage",
+            channel="algo",
+            text="Hello World!"
+        )
+    sched.start()
 
 if __name__ == "__main__":
     get_random_post()

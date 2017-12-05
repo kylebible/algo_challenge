@@ -122,4 +122,6 @@ def home(path):
 
 
 if __name__ == "__main__":
+    thr = Thread(target=scheduled_post)
+    thr.start()
     app.run()
